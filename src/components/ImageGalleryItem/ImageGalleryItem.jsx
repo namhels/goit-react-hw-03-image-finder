@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
+import Modal from 'components/Modal';
 
 
 class ImageGalleryItem extends Component {
@@ -7,22 +8,26 @@ class ImageGalleryItem extends Component {
     isModalOpen: false,
   };
 
+
   openModal = () => this.setState({ isModalOpen: true });
   closeModal = () => this.setState({ isModalOpen: false });
 
   render() {
     const { item: {webformatURL, tags} } = this.props;
-    // const { isModalOpen } = this.state;
+    const { isModalOpen } = this.state;
     return (
       <>
-        <img className="ImageGalleryItem-image" src={webformatURL} alt={tags} />
+        <img
+          className="ImageGalleryItem-image"
+          src={webformatURL} alt={tags}
+          onClick={this.openModal}
+        />
+        {isModalOpen &&
+          <Modal
+            item={this.props.item}
+            onClose={this.closeModal} />
+        }
       </>
-        // {isModalOpen && (
-        //   <EditMaterialModal
-        //     onClose={this.closeModal}
-        //   />
-        // )}
-
     );
   };
 };
