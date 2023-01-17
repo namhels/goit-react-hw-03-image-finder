@@ -14,12 +14,7 @@ const CONTACTS_KEY = 'contacts_key';
 
 class App extends Component {
   state = {
-    contacts: [
-    {id: 'id-1', name: 'Howard Roark', number: '459-12-56'},
-    {id: 'id-2', name: 'Dominique Francon', number: '443-89-12'},
-    {id: 'id-3', name: 'John Galt', number: '645-17-79'},
-    {id: 'id-4', name: 'Dagny Taggart', number: '888-88-88'},
-    ],
+    contacts: [],
     filter: '',
   };
 

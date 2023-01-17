@@ -8,7 +8,7 @@ import { theme } from 'utils';
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <App class="App" />
+      <App className="App" />
     </ThemeProvider>
   </React.StrictMode>
 );
