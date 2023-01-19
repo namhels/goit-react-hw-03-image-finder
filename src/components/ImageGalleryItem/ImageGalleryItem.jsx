@@ -13,7 +13,7 @@ class ImageGalleryItem extends Component {
   closeModal = () => this.setState({ isModalOpen: false });
 
   render() {
-    const { item: {webformatURL, tags} } = this.props;
+    const { item, item: {webformatURL, tags} } = this.props;
     const { isModalOpen } = this.state;
     return (
       <>
@@ -24,7 +24,7 @@ class ImageGalleryItem extends Component {
         />
         {isModalOpen &&
           <Modal
-            item={this.props.item}
+            item={item}
             onClose={this.closeModal} />
         }
       </>
@@ -33,8 +33,9 @@ class ImageGalleryItem extends Component {
 };
 
 ImageGalleryItem.propTypes = {
-  webformatURL: PropTypes.string,
-  tags: PropTypes.string,
-};
+  item:  PropTypes.shape({
+  webformatURL: PropTypes.string.isRequired,
+  tags: PropTypes.string.isRequired,
+}).isRequired};
 
 export default ImageGalleryItem;

@@ -12,7 +12,7 @@ const initialValues = {
   inputValue: '',
 };
 
-const Searchbar = ({onSubmit}) => {
+const Searchbar = ({ onSubmit }) => {
   const handleSubmit = async ({ inputValue }, { resetForm, setSubmitting }) => {
     await onSubmit(inputValue);
     setSubmitting(false);
@@ -27,8 +27,8 @@ const Searchbar = ({onSubmit}) => {
         validationSchema={schema}
         onSubmit={handleSubmit}>
           <Form className="SearchForm">
-          <button type="submit" className="SearchForm-button">
-            <BsSearch className="SearchForm-button-label"/>
+            <button type="submit" className="SearchForm-button">
+              <BsSearch className="SearchForm-button-label"/>
             </button>
             <Field
               className="SearchForm-input"
@@ -38,7 +38,7 @@ const Searchbar = ({onSubmit}) => {
               autoFocus
               placeholder="Search images and photos"
               />
-            </Form>
+          </Form>
       </Formik>
     </header>
   );
