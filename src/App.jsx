@@ -11,42 +11,56 @@ class App extends Component {
   state = {
     items: [],
     isLoading: false,
-    inputValue: "",
+    inputValue: null,
     page: 1,
+    // totalPages: 0,
+    totalHits: 0,
   };
 
   componentDidUpdate (_, prevState) {
     const { inputValue, page } = this.state;
     if (
+        prevState.inputValue !== inputValue ||
         prevState.page !== page
     ) {
       this.getItems(inputValue, page);
     };
   };
 
-  getItems = async (inputValue) => {
-    this.setState({ inputValue: inputValue });
+  handleSubmit = (inputValue) => {
+    this.setState({
+      inputValue: inputValue,
+      items: [],
+      page: 1,
+    });
+  };
+
+  getItems = async () => {
     try {
       this.setState({ isLoading: true });
-    console.log(this.state );
       const { page, inputValue } = this.state;
-      const { hits } = await getImages(inputValue, page);
+      const { hits, totalHits  } = await getImages(inputValue, page);
       if (hits.length === 0) {
         toast.info(`No results were found for your search :( Please enter another query`);
         this.setState({ items: [], isLoading: false });
         return;
       };
+      // const totalPages = Math.ceil(totalHits / hits.length);
+      const s = totalHits;
+      console.log(typeof s);
       this.setState(prevState => ({
         items: [...prevState.items, ...hits],
-        // inputValue: inputValue,
-        // page: page,
         isLoading: false,
+        // totalPages: totalPages,
+        totalHits: totalHits,
       }));
-      // this.setState({ inputValue: inputValue, page: 1, isLoading: false });
+      console.log(totalHits);
+      console.log(this.state);
+      console.log(this.state.totalHits);
     } catch (error) {
       toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
       this.setState({ isLoading: false });
-    }
+    };
   };
 
   LoadMore = () => {
@@ -56,19 +70,20 @@ class App extends Component {
   };
 
   render() {
-    const { items, isLoading } = this.state;
+    const { items, isLoading, totalHits } = this.state;
     return (
       <>
         <Searchbar
-          onSubmit={this.getItems}
+          onSubmit={this.handleSubmit}
         />
         {isLoading
           ? <Loader />
           : <ImageGallery items={items} />
         }
-        {items.length >= 12
+        {items < totalHits
           ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
           : null
+          // && toast.warn(`We're sorry, but you've reached the end of search results`)
         }
         <ToastContainer
           position="top-right"
