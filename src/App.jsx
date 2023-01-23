@@ -1,30 +1,20 @@
-import LoadMore from 'components/Button/Button';
-import ImageGallery from 'components/ImageGallery';
-import Loader from 'components/Loader';
-import Searchbar from 'components/Searchbar';
 import React, { Component } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import getImages from './utils/';
+import LoadMore from 'components/Button/Button';
+import ImageGallery from 'components/ImageGallery';
+import Loader from 'components/Loader';
+import Searchbar from 'components/Searchbar';
 
 class App extends Component {
   state = {
     items: [],
     isLoading: false,
-    inputValue: null,
+    inputValue: '',
     page: 1,
     // totalPages: 0,
     totalHits: 0,
-  };
-
-  componentDidUpdate (_, prevState) {
-    const { inputValue, page } = this.state;
-    if (
-        prevState.inputValue !== inputValue ||
-        prevState.page !== page
-    ) {
-      this.getItems(inputValue, page);
-    };
   };
 
   handleSubmit = (inputValue) => {
@@ -35,33 +25,68 @@ class App extends Component {
     });
   };
 
-  getItems = async () => {
-    try {
-      this.setState({ isLoading: true });
-      const { page, inputValue } = this.state;
-      const { hits, totalHits  } = await getImages(inputValue, page);
-      if (hits.length === 0) {
-        toast.info(`No results were found for your search :( Please enter another query`);
-        this.setState({ items: [], isLoading: false });
-        return;
+  async componentDidUpdate (_, prevState) {
+    if (prevState.inputValue !== this.state.inputValue || prevState.page !== this.state.page) {
+      try {
+        this.setState({ isLoading: true });
+        const { hits, totalHits  } = await getImages(this.state.inputValue, this.state.page);
+        if (hits.length === 0) {
+          toast.info(`No results were found for your search :( Please enter another query`);
+          this.setState({ items: [], isLoading: false });
+          return;
+        };
+        this.setState(prevState => ({
+          items: [...prevState.items, ...hits],
+          isLoading: false,
+          // page: this.state.page,
+          totalHits: totalHits,
+        }));
+        console.log(this.state);
+      }
+      catch (error) {
+        toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
+        this.setState({ isLoading: false });
       };
-      // const totalPages = Math.ceil(totalHits / hits.length);
-      const s = totalHits;
-      console.log(typeof s);
-      this.setState(prevState => ({
-        items: [...prevState.items, ...hits],
-        isLoading: false,
-        // totalPages: totalPages,
-        totalHits: totalHits,
-      }));
-      console.log(totalHits);
-      console.log(this.state);
-      console.log(this.state.totalHits);
-    } catch (error) {
-      toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
-      this.setState({ isLoading: false });
     };
   };
+
+  // getItems = async (inputValue, page, prevInputValue, prevPage) => {
+  //   try {
+  //     this.setState({ isLoading: true });
+  //     // const { page, inputValue } = this.state;
+  //     const { hits, totalHits  } = await getImages(inputValue, page);
+  //     if (hits.length === 0) {
+  //       toast.info(`No results were found for your search :( Please enter another query`);
+  //       this.setState({ items: [], isLoading: false });
+  //       return;
+  //     };
+  //     // const totalPages = Math.ceil(totalHits / hits.length);
+
+  //     if (inputValue !== prevInputValue) {
+  //       this.setState({
+  //       items: [ ...hits],
+  //       isLoading: false,
+  //       // totalPages: totalPages,
+  //       totalHits: totalHits,
+  //     })
+  //     };
+
+  //     if (page !== prevPage) {
+  //       this.setState(prevState => ({
+  //         items: [...prevState.items, ...hits],
+  //         isLoading: false,
+  //         // totalPages: totalPages,
+  //         totalHits: totalHits,
+  //       }));
+  //     };
+
+  //     // console.log(prevStateItems);
+  //     console.log(this.state);
+  //   } catch (error) {
+  //     toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
+  //     this.setState({ isLoading: false });
+  //   };
+  // };
 
   LoadMore = () => {
     this.setState(prevState => ({
@@ -80,7 +105,7 @@ class App extends Component {
           ? <Loader />
           : <ImageGallery items={items} />
         }
-        {items < totalHits
+        {items.length && items.length < totalHits
           ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
           : null
           // && toast.warn(`We're sorry, but you've reached the end of search results`)
