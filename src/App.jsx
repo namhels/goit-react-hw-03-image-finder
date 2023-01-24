@@ -27,14 +27,19 @@ class App extends Component {
   componentDidUpdate(_, prevState) {
     const { inputValue, page } = this.state;
     if (prevState.inputValue !== inputValue || prevState.page !== page) {
-      this.getItems(inputValue, page);
+      this.getItems(inputValue, page );
     };
   };
 
-  getItems = async (inputValue, page) => {
+  getItems = async (inputValue, page ) => {
     try {
       this.setState({ isLoading: true });
       const { hits, totalHits } = await getImages(inputValue, page);
+
+      // if (!inputValue) {
+      //   toast.error(`Please enter query`);
+      //   return;
+      // };
 
       if (totalHits === 0) {
         toast.info(`No results were found for your search :( Please enter another query`);
@@ -50,11 +55,9 @@ class App extends Component {
       };
 
       this.setState(({items}) => ({
-        // items: page !== 1 ? [...items, ...hits] : [...hits],
         items: [...items, ...hits],
         totalHits,
       }));
-      console.log(this.state);
 
     } catch (error) {
       toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
@@ -77,9 +80,10 @@ class App extends Component {
         <Searchbar
           onSubmit={this.handleSubmit}
         />
+        <ImageGallery items={items} />
         {isLoading
           ? <Loader />
-          : <ImageGallery items={items} />
+          : null
         }
         {items.length && items.length < totalHits
           ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
