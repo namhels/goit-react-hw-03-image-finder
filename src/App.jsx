@@ -13,7 +13,6 @@ class App extends Component {
     isLoading: false,
     inputValue: '',
     page: 1,
-    // totalPages: 0,
     totalHits: 0,
   };
 
@@ -25,72 +24,49 @@ class App extends Component {
     });
   };
 
-  async componentDidUpdate (_, prevState) {
-    if (prevState.inputValue !== this.state.inputValue || prevState.page !== this.state.page) {
-      try {
-        this.setState({ isLoading: true });
-        const { hits, totalHits  } = await getImages(this.state.inputValue, this.state.page);
-        if (hits.length === 0) {
-          toast.info(`No results were found for your search :( Please enter another query`);
-          this.setState({ items: [], isLoading: false });
-          return;
-        };
-        this.setState(prevState => ({
-          items: [...prevState.items, ...hits],
-          isLoading: false,
-          // page: this.state.page,
-          totalHits: totalHits,
-        }));
-        console.log(this.state);
-      }
-      catch (error) {
-        toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
-        this.setState({ isLoading: false });
-      };
+  componentDidUpdate(_, prevState) {
+    const { inputValue, page } = this.state;
+    if (prevState.inputValue !== inputValue || prevState.page !== page) {
+      this.getItems(inputValue, page);
     };
   };
 
-  // getItems = async (inputValue, page, prevInputValue, prevPage) => {
-  //   try {
-  //     this.setState({ isLoading: true });
-  //     // const { page, inputValue } = this.state;
-  //     const { hits, totalHits  } = await getImages(inputValue, page);
-  //     if (hits.length === 0) {
-  //       toast.info(`No results were found for your search :( Please enter another query`);
-  //       this.setState({ items: [], isLoading: false });
-  //       return;
-  //     };
-  //     // const totalPages = Math.ceil(totalHits / hits.length);
+  getItems = async (inputValue, page) => {
+    try {
+      this.setState({ isLoading: true });
+      const { hits, totalHits } = await getImages(inputValue, page);
 
-  //     if (inputValue !== prevInputValue) {
-  //       this.setState({
-  //       items: [ ...hits],
-  //       isLoading: false,
-  //       // totalPages: totalPages,
-  //       totalHits: totalHits,
-  //     })
-  //     };
+      if (totalHits === 0) {
+        toast.info(`No results were found for your search :( Please enter another query`);
+        return;
+      };
 
-  //     if (page !== prevPage) {
-  //       this.setState(prevState => ({
-  //         items: [...prevState.items, ...hits],
-  //         isLoading: false,
-  //         // totalPages: totalPages,
-  //         totalHits: totalHits,
-  //       }));
-  //     };
+      if (page === 1 && totalHits > 0) {
+        toast.success(`We found ${totalHits} images for your search`);
+      };
 
-  //     // console.log(prevStateItems);
-  //     console.log(this.state);
-  //   } catch (error) {
-  //     toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
-  //     this.setState({ isLoading: false });
-  //   };
-  // };
+      if (hits.length < 12) {
+        toast.warn(`We're sorry, but you've reached the end of search results`);
+      };
+
+      this.setState(({items}) => ({
+        // items: page !== 1 ? [...items, ...hits] : [...hits],
+        items: [...items, ...hits],
+        totalHits,
+      }));
+      console.log(this.state);
+
+    } catch (error) {
+      toast.error(`Ouch! Something went wrong :( Reload the page and try again!`);
+
+    } finally {
+    this.setState({ isLoading: false });
+    };
+  };
 
   LoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
+    this.setState(({ page }) => ({
+      page: page + 1,
     }));
   };
 
@@ -108,7 +84,6 @@ class App extends Component {
         {items.length && items.length < totalHits
           ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
           : null
-          // && toast.warn(`We're sorry, but you've reached the end of search results`)
         }
         <ToastContainer
           position="top-right"

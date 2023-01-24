@@ -26,6 +26,7 @@ const Searchbar = ({ onSubmit }) => {
         initialValues={initialValues}
         validationSchema={schema}
         onSubmit={handleSubmit}>
+        {({ isSubmitting }) => (
           <Form className="SearchForm">
             <button type="submit" className="SearchForm-button">
               <BsSearch className="SearchForm-button-label"/>
@@ -39,6 +40,7 @@ const Searchbar = ({ onSubmit }) => {
               placeholder="Search images and photos"
               />
           </Form>
+        )}
       </Formik>
     </header>
   );

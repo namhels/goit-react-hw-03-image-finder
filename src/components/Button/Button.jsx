@@ -1,4 +1,6 @@
+import { Button } from "./Button.Styled";
+
 const LoadMore = ({ onClick, children }) =>
-  <button onClick={onClick} type="button" className="Button">{children}</button>;
+  <Button onClick={onClick} type="button">{children}</Button>;
 
 export default LoadMore;
