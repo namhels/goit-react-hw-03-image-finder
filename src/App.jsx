@@ -17,11 +17,13 @@ class App extends Component {
   };
 
   handleSubmit = (inputValue) => {
-    this.setState({
-      inputValue: inputValue,
+    this.setState((prev) => ({
+      inputValue: prev.inputValue === inputValue
+        ? prev.inputValue
+        : inputValue,
       items: [],
       page: 1,
-    });
+    }));
   };
 
   componentDidUpdate(_, prevState) {
@@ -42,16 +44,16 @@ class App extends Component {
       // };
 
       if (totalHits === 0) {
-        toast.info(`No results were found for your search :( Please enter another query`);
+        toast.warn(`No results were found for your search :( Please enter another query`);
         return;
       };
 
-      if (page === 1 && totalHits > 0) {
+      if (page === 1) {
         toast.success(`We found ${totalHits} images for your search`);
       };
 
-      if (hits.length < 12) {
-        toast.warn(`We're sorry, but you've reached the end of search results`);
+      if (hits.length < 12 && page !== 1) {
+        toast.info(`We're sorry, but you've reached the end of search results`);
       };
 
       this.setState(({items}) => ({
@@ -83,11 +85,9 @@ class App extends Component {
         <ImageGallery items={items} />
         {isLoading
           ? <Loader />
-          : null
-        }
-        {items.length && items.length < totalHits
-          ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
-          : null
+          : items.length && items.length < totalHits
+            ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
+            : null
         }
         <ToastContainer
           position="top-right"
@@ -102,7 +102,7 @@ class App extends Component {
           theme="colored"
         />
       </>
-    )
+    );
   };
 };
 
