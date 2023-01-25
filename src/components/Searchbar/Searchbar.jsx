@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Formik, Form, Field } from 'formik';
+import { Formik } from 'formik';
 import * as yup from 'yup';
-import { BsSearch } from 'react-icons/bs';
+import { IconBsSearch, SearchbarStyled, SearchForm, SearchFormButton, SearchFormInput } from './Searchbar.Styled';
 
 const schema = yup.object({
   inputValue: yup.string().required(),
@@ -21,28 +21,27 @@ const Searchbar = ({ onSubmit }) => {
 
 
   return (
-    <header className="Searchbar">
+    <SearchbarStyled>
       <Formik
         initialValues={initialValues}
         validationSchema={schema}
         onSubmit={handleSubmit}>
         {({ isSubmitting }) => (
-          <Form className="SearchForm">
-            <button type="submit" className="SearchForm-button">
-              <BsSearch className="SearchForm-button-label"/>
-            </button>
-            <Field
-              className="SearchForm-input"
+          <SearchForm>
+            <SearchFormButton type="submit">
+              <IconBsSearch />
+            </SearchFormButton>
+            <SearchFormInput
               name="inputValue"
               type="text"
               autoComplete="off"
               autoFocus
               placeholder="Search images and photos"
               />
-          </Form>
+          </SearchForm>
         )}
       </Formik>
-    </header>
+    </SearchbarStyled>
   );
 };
 

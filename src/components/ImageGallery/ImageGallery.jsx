@@ -1,17 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import ImageGalleryItem from 'components/ImageGalleryItem';
+import { Gallery, GalleryItem } from "./ImageGallery.Styled";
 
 
 const ImageGallery = ({ items }) => {
   return (
-    <ul className="ImageGallery">
+    <Gallery>
       {items.map(item => (
-        <li className="ImageGalleryItem" key={item.id}>
+        <GalleryItem key={item.id}>
           <ImageGalleryItem item={item} />
-        </li>
+        </GalleryItem>
       ))}
-    </ul>
+    </Gallery>
   );
 };
 

@@ -17,13 +17,11 @@ class App extends Component {
   };
 
   handleSubmit = (inputValue) => {
-    this.setState((prev) => ({
-      inputValue: prev.inputValue === inputValue
-        ? prev.inputValue
-        : inputValue,
+    this.setState({
+      inputValue,
       items: [],
       page: 1,
-    }));
+    });
   };
 
   componentDidUpdate(_, prevState) {
@@ -75,20 +73,30 @@ class App extends Component {
     }));
   };
 
+  // =======<<< Avoid Nested Ternary Operators >>>=========
+  LoaderOrLoadMore = ({ isLoading, isLoadMore }) => {
+    if (isLoading) {
+      return <Loader />
+    };
+    if (isLoadMore) {
+      return <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
+    };
+    return null;
+  };
+
   render() {
     const { items, isLoading, totalHits } = this.state;
+    const LoaderOrLoadMore = this.LoaderOrLoadMore;
     return (
       <>
         <Searchbar
           onSubmit={this.handleSubmit}
         />
         <ImageGallery items={items} />
-        {isLoading
-          ? <Loader />
-          : items.length && items.length < totalHits
-            ? <LoadMore onClick={this.LoadMore}>Load more</LoadMore>
-            : null
-        }
+        <LoaderOrLoadMore
+          isLoading={isLoading}
+          isLoadMore={items.length && items.length < totalHits}
+        />
         <ToastContainer
           position="top-right"
           autoClose={3000}
