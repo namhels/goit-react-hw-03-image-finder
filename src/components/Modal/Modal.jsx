@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
-import { ModalStyled, Overlay } from './Modal.Styled';
+import { Img, ModalStyled, Overlay } from './Modal.Styled';
 
 const modalRoot = document.querySelector('#modal-root');
 
@@ -21,7 +21,7 @@ class Modal extends Component {
   };
 
   handleBackdropClick = event => {
-    if (event.currentTarget === event.target) {
+    if (event.target.tagName !== 'IMG') {
       this.props.onClose();
     };
   };
@@ -31,7 +31,7 @@ class Modal extends Component {
     return createPortal(
       <Overlay onClick={this.handleBackdropClick}>
         <ModalStyled>
-          <img src={largeImageURL} alt={tags} />
+          <Img src={largeImageURL} alt={tags} />
         </ModalStyled>
       </Overlay>,
       modalRoot,

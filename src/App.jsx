@@ -17,6 +17,10 @@ class App extends Component {
   };
 
   handleSubmit = (inputValue) => {
+    if (inputValue.trim() === '') {
+      toast.error(`Please enter query`);
+      return;
+    };
     this.setState({
       inputValue,
       items: [],
@@ -35,11 +39,6 @@ class App extends Component {
     try {
       this.setState({ isLoading: true });
       const { hits, totalHits } = await getImages(inputValue, page);
-
-      // if (!inputValue) {
-      //   toast.error(`Please enter query`);
-      //   return;
-      // };
 
       if (totalHits === 0) {
         toast.warn(`No results were found for your search :( Please enter another query`);
@@ -87,6 +86,7 @@ class App extends Component {
   render() {
     const { items, isLoading, totalHits } = this.state;
     const LoaderOrLoadMore = this.LoaderOrLoadMore;
+    const isLoadMore = items.length && items.length < totalHits;
     return (
       <>
         <Searchbar
@@ -95,7 +95,7 @@ class App extends Component {
         <ImageGallery items={items} />
         <LoaderOrLoadMore
           isLoading={isLoading}
-          isLoadMore={items.length && items.length < totalHits}
+          isLoadMore={isLoadMore}
         />
         <ToastContainer
           position="top-right"
